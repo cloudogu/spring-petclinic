@@ -239,6 +239,7 @@
               <goal>build-info</goal>
             </goals>
             <configuration>
+              <executable>true</executable>
               <additionalProperties>
                 <encoding.source>${project.build.sourceEncoding}</encoding.source>
                 <encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>
@@ -259,6 +260,15 @@
               <goal>prepare-agent</goal>
             </goals>
           </execution>
+        </executions>
+      </plugin>
+
+      <!-- Spring Boot Actuator displays build-related information if a git.properties
+        file is present at the classpath -->
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <executions>
           <execution>
             <id>report</id>
             <goals>
