@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class FindOwnersTest {
+public class FindOwnersITCase {
 
     private static WebDriver driver;
 

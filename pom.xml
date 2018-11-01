@@ -31,6 +31,7 @@
         <cobertura.version>2.7</cobertura.version>
 
         <selenium.version>3.14.0</selenium.version>
+        <e2e.tests.pattern>org/springframework/samples/petclinic/e2e/**/*</e2e.tests.pattern>
     </properties>
 
     <dependencies>
@@ -153,19 +154,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>${cobertura.version}</version>
@@ -233,7 +221,33 @@
                 </dependencies>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.22.1</version>
+                    <executions>
+                        <execution>
+                            <phase>integration-test</phase>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
     </build>
+
     <reporting>
         <plugins>
             <!-- integrate maven-cobertura-plugin to project site -->
@@ -251,4 +265,41 @@
         </plugins>
     </reporting>
 
+    <profiles>
+        <profile>
+            <id>e2e</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>${e2e.tests.pattern}</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>it</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>${e2e.tests.pattern}</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
