@@ -36,7 +36,7 @@ public class FindOwnersITCase {
 
     @Test
     public void addAndFindOwner() {
-        driver.get("http://localhost:" + environment.getProperty("local.server.port"));
+        driver.get(getPetclinicHost());
 
         driver.findElement(By.cssSelector("[title^='find owners']")).click();
         driver.findElement(By.linkText("Add Owner")).click();
@@ -64,6 +64,12 @@ public class FindOwnersITCase {
             LOG.error("Unable to create URL for selenium remote webdriver" + remoteUrl, e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String getPetclinicHost() {
+        // When using selenium grid, this might be different to "localhost"
+        return System.getProperty("selenium.petclinic.url",
+                                  "http://localhost:" + environment.getProperty("local.server.port"));
     }
 
     @AfterClass
