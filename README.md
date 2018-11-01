@@ -1,3 +1,15 @@
+# Spring PetClinic Sample Application (Cloudogu Ecosystem)
+
+This is the well-known spring sample application petclinic that has been extended to be a showcase for the Clodugou 
+EcoSystem. See [demo.cloudogu.net](https://cloudogu.com/en/#demo).
+
+We extended it by  
+
+* a [Smeagol Wiki](https://github.com/cloudogu/smeagol) (see [Home.md](docs/Home.md))
+* an [integration test](src/test/java/org/springframework/samples/petclinic/owner/OwnerControllerITCase.java) (run with failsafe plugin, see [pom.xml](pom.xml))
+* a Jenkinsfile for building, testing and SonarQube analysis.
+
+For more details on petclinic, see also [original spring petclinci readme.md](readme-petclinic.md).
 # Spring PetClinic Sample Application [![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml)[![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-projects/spring-petclinic) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=7517918)
