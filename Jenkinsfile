@@ -57,7 +57,7 @@ node {
 
                             def docker = new Docker(this)
                             def zaleniumIp = docker.findIp(zaleniumContainer)
-                            def petclinicHostIp = docker.findDockerHostIp()
+                            def petclinicHostIp = docker.findIp()
 
                             try {
                                 mvn "failsafe:integration-test failsafe:verify -Pe2e " +

@@ -36,7 +36,7 @@ public class FindOwnersITCase {
 
     @Test
     public void addAndFindOwner() {
-        driver.get("http://" + getPetclinicHost() + ":" + environment.getProperty("local.server.port"));
+        driver.get(getPetclinicUrl());
 
         driver.findElement(By.cssSelector("[title^='find owners']")).click();
         driver.findElement(By.linkText("Add Owner")).click();
@@ -64,6 +64,16 @@ public class FindOwnersITCase {
             LOG.error("Unable to create URL for selenium remote webdriver" + remoteUrl, e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String getPetclinicUrl() {
+        // Allows faster local development or builds. Start PetClinic once, pass URL via the system property instead of
+        // Starting a new instance via SpringBootTest each time.
+        String petClinicUrl =
+            System.getProperty("selenium.petclinic.url",
+                               "http://" + getPetclinicHost() + ":" + environment.getProperty("local.server.port"));
+        System.out.println("PetClinicUrl=" + petClinicUrl);
+        return petClinicUrl;
     }
 
     private String getPetclinicHost() {
