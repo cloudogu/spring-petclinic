@@ -36,7 +36,7 @@ public class FindOwnersITCase {
 
     @Test
     public void addAndFindOwner() {
-        driver.get(getPetclinicHost());
+        driver.get("http://" + getPetclinicHost() + ":" + environment.getProperty("local.server.port"));
 
         driver.findElement(By.cssSelector("[title^='find owners']")).click();
         driver.findElement(By.linkText("Add Owner")).click();
@@ -68,8 +68,8 @@ public class FindOwnersITCase {
 
     private String getPetclinicHost() {
         // When using selenium grid, this might be different to "localhost"
-        return System.getProperty("selenium.petclinic.url",
-                                  "http://localhost:" + environment.getProperty("local.server.port"));
+        return System.getProperty("selenium.petclinic.host",
+                                  "localhost");
     }
 
     @AfterClass

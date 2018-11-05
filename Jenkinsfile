@@ -14,6 +14,8 @@ node {
     String credentialsId = 'scmCredentials'
 
     Maven mvn = new MavenWrapper(this)
+    // Workaround SUREFIRE-1588 on Debian/Ubuntu. Should be fixed in Surefire 3.0.0
+    mvn.additionalArgs = '-DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"'
 
     catchError {
 
@@ -47,33 +49,23 @@ node {
 
                         sh "rm -rf $WORKSPACE/$zaleniumVideoDir && mkdir $WORKSPACE/$zaleniumVideoDir"
 
-                        def docker = new Docker(this)
-
-                        String uid = sh (returnStdout: true, script: 'echo "$(id -u):$(id -g)"').trim()
-
                         docker.image("elgalu/selenium:$seleniumVersion").pull()
                         docker.image("dosel/zalenium:$zaleniumVersion")
-                                .mountJenkinsUser()
-                        //.withRun("-u $uid -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE/$zaleniumVideoDir:/home/seluser/videos", 'start') {
-                                .withRun("-e HOST_UID=1002 -e HOST_GID=1003 -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE/$zaleniumVideoDir:/home/seluser/videos", 'start') {
-                            zaleniumContainer ->
+                                .withRun('-v /var/run/docker.sock:/var/run/docker.sock ' +
+                                    "-v $WORKSPACE/$zaleniumVideoDir:/home/seluser/videos",
+                                    'start') { zaleniumContainer ->
 
-                                def zaleniumIp = docker.findIp(zaleniumContainer)
+                            def docker = new Docker(this)
+                            def zaleniumIp = docker.findIp(zaleniumContainer)
+                            def petclinicHostIp = docker.findDockerHostIp()
 
-                                try {
-                                    // Run petclinic inside a container, so the zalenium container can reach the maven container
-                                    docker.image('openjdk:8u181')
-                                            .withRun("-v $WORKSPACE/target:/target", 'java -jar /target/spring-petclinic.jar') {
-                                        petClinicContainer ->
-                                            def petClinicContainerIp = docker.findIp(petClinicContainer)
-
-                                            new MavenInDocker(this, '3.5.4-jdk-8').mvn "failsafe:integration-test failsafe:verify -Pe2e " +
-                                                    "-Dselenium.remote.url=http://$zaleniumIp:4444/wd/hub " +
-                                                    "-Dselenium.petclinic.url=http://$petClinicContainerIp:8080/"
-                                    }
-                                } finally {
-                                    archiveArtifacts allowEmptyArchive: true, artifacts: "$WORKSPACE/$zaleniumVideoDir/*.mp4"
-                                }
+                            try {
+                                mvn "failsafe:integration-test failsafe:verify -Pe2e " +
+                                        "-Dselenium.remote.url=http://${zaleniumIp}:4444/wd/hub " +
+                                        "-Dselenium.petclinic.host=${petclinicHostIp}"
+                            } finally {
+                                archiveArtifacts allowEmptyArchive: true, artifacts: "$WORKSPACE/$zaleniumVideoDir/*.mp4"
+                            }
                         }
                     }
                 }
