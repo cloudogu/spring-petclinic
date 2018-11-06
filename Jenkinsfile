@@ -44,28 +44,32 @@ node {
                 uiTest: {
                     stage('UI Test') {
                         String seleniumVersion = '3.14.0-p15'
-                        String zaleniumVersion = '3.14.0f'
+                        String zaleniumVersion = '3.14.0g'
                         String zaleniumVideoDir = 'zalenium'
                         boolean debugZalenium = false
 
-                        sh "rm -rf $WORKSPACE/$zaleniumVideoDir && mkdir $WORKSPACE/$zaleniumVideoDir"
+                        sh "mkdir -p ${zaleniumVideoDir}"
 
-                        docker.image("elgalu/selenium:$seleniumVersion").pull()
-                        docker.image("dosel/zalenium:$zaleniumVersion")
+                        docker.image("elgalu/selenium:${seleniumVersion}").pull()
+                        docker.image("dosel/zalenium:${zaleniumVersion}")
                                 .withRun(
-                                    // Zalenium starts headless browsers in docker containers
+                                    // Zalenium starts headless browsers in docker containers, so it needs the socket
                                     '-v /var/run/docker.sock:/var/run/docker.sock ' +
-                                    // Without priviledged no videos seem to be stored...
-                                    //'--privileged ' +
-                                    "-v $WORKSPACE/$zaleniumVideoDir:/home/seluser/videos",
+                                    "-v ${WORKSPACE}/${zaleniumVideoDir}:/home/seluser/videos",
                                     'start ' +
                                     "${debugZalenium? '--debugEnabled true' : ''}"
                                         ) { zaleniumContainer ->
-                            def docker = new Docker(this)
-                            def zaleniumIp = docker.findIp(zaleniumContainer)
-                            def petclinicHostIp = docker.findIp()
+                            def zaleniumIp = new Docker(this).findIp(zaleniumContainer)
+
+                            waitForSeleniumToGetReady(zaleniumIp)
+                            // Delete videos from previous builds, if any
+                            // This also works around the bug that zalenium stores files as root
+                            // https://github.com/zalando/zalenium/issues/760
+                            // This workaround still leaves a couple of files owned by root in the zaleniumVideoDir
+                            resetZalenium(zaleniumIp)
 
                             try {
+                                def petclinicHostIp = new Docker(this).findIp()
                                 mvn "failsafe:integration-test failsafe:verify -Pe2e " +
                                         "-Dselenium.remote.url=http://${zaleniumIp}:4444/wd/hub " +
                                         "-Dselenium.petclinic.host=${petclinicHostIp}"
@@ -73,8 +77,12 @@ node {
                                 // Wait for Selenium sessions to end (i.e. videos to be copied)
                                 // Leaving the withRun() closure leads to "docker rm -f" being called, cancelling copying
                                 waitForSeleniumSessionsToEnd(zaleniumIp)
-                                sh "docker logs ${zaleniumContainer.id} > $zaleniumVideoDir/zalenium-docker.log 2>&1"
                                 archiveArtifacts allowEmptyArchive: true, artifacts: "$zaleniumVideoDir/*.mp4"
+
+                                // Stop container gracefully and wait
+                                sh "docker stop ${zaleniumContainer.id}"
+                                // Store log for debugging purposes
+                                sh "docker logs ${zaleniumContainer.id} > zalenium-docker.log 2>&1"
                             }
                         }
                     }
@@ -99,19 +107,38 @@ node {
     junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/TEST-*.xml,**/target/surefire-reports/TEST-*.xml'
 }
 
+void waitForSeleniumToGetReady(String host) {
+    timeout(time: 1, unit: 'MINUTES') {
+        echo "Waiting for selenium to become ready at http://${host}"
+        while (!isSeleniumReady(host)) {
+            sleep(time: 1, unit: 'SECONDS')
+        }
+        echo "Selenium ready at http://${host}"
+    }
+}
+
+boolean isSeleniumReady(String host) {
+    sh(returnStdout: true,
+            script: "curl -sSL http://${host}:4444/wd/hub/status || true") // Don't fail
+            .contains('status\": 0')
+}
+
 void waitForSeleniumSessionsToEnd(String host) {
-    isSeleniumSessionsActive(host)
     timeout(time: 1, unit: 'MINUTES') {
         echo "Waiting for selenium sessions to end at http://${host}"
         while (isSeleniumSessionsActive(host)) {
             sleep(time: 1, unit: 'SECONDS')
         }
-        echo "No more selenoum sessions active at http://${host}"
-
+        echo "No more selenium sessions active at http://${host}"
     }
 }
 
 boolean isSeleniumSessionsActive(String host) {
     sh(returnStatus: true,
-            script: "curl -sSL http://$host:4444/grid/api/sessions | grep sessions") == 0
+            script: "(curl -sSL http://${host}:4444/grid/api/sessions || true) | grep sessions") == 0
+}
+
+void resetZalenium(String host) {
+    sh(returnStatus: true,
+            script: "curl -sSL http://${host}:4444/dashboard/cleanup?action=doReset") == 0
 }
