@@ -59,6 +59,8 @@ public class FindOwnersITCase {
         try {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setBrowserName(browser);
+            // This could be extended by adding e.g. the test name or success status that will then be reflected in the
+            // Video name: https://opensource.zalando.com/zalenium/#usage
             return new RemoteWebDriver(new URL(remoteUrl), capabilities);
         } catch (MalformedURLException e) {
             LOG.error("Unable to create URL for selenium remote webdriver" + remoteUrl, e);

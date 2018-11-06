@@ -46,15 +46,21 @@ node {
                         String seleniumVersion = '3.14.0-p15'
                         String zaleniumVersion = '3.14.0f'
                         String zaleniumVideoDir = 'zalenium'
+                        boolean debugZalenium = false
 
                         sh "rm -rf $WORKSPACE/$zaleniumVideoDir && mkdir $WORKSPACE/$zaleniumVideoDir"
 
                         docker.image("elgalu/selenium:$seleniumVersion").pull()
                         docker.image("dosel/zalenium:$zaleniumVersion")
-                                .withRun('-v /var/run/docker.sock:/var/run/docker.sock ' +
+                                .withRun(
+                                    // Zalenium starts headless browsers in docker containers
+                                    '-v /var/run/docker.sock:/var/run/docker.sock ' +
+                                    // Without priviledged no videos seem to be stored...
+                                    //'--privileged ' +
                                     "-v $WORKSPACE/$zaleniumVideoDir:/home/seluser/videos",
-                                    'start') { zaleniumContainer ->
-
+                                    'start ' +
+                                    "${debugZalenium? '--debugEnabled true' : ''}"
+                                        ) { zaleniumContainer ->
                             def docker = new Docker(this)
                             def zaleniumIp = docker.findIp(zaleniumContainer)
                             def petclinicHostIp = docker.findIp()
@@ -64,7 +70,11 @@ node {
                                         "-Dselenium.remote.url=http://${zaleniumIp}:4444/wd/hub " +
                                         "-Dselenium.petclinic.host=${petclinicHostIp}"
                             } finally {
-                                archiveArtifacts allowEmptyArchive: true, artifacts: "$WORKSPACE/$zaleniumVideoDir/*.mp4"
+                                // Wait for Selenium sessions to end (i.e. videos to be copied)
+                                // Leaving the withRun() closure leads to "docker rm -f" being called, cancelling copying
+                                waitForSeleniumSessionsToEnd(zaleniumIp)
+                                sh "docker logs ${zaleniumContainer.id} > $zaleniumVideoDir/zalenium-docker.log 2>&1"
+                                archiveArtifacts allowEmptyArchive: true, artifacts: "$zaleniumVideoDir/*.mp4"
                             }
                         }
                     }
@@ -87,4 +97,21 @@ node {
 
     // Archive Unit and integration test results, if any
     junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/TEST-*.xml,**/target/surefire-reports/TEST-*.xml'
+}
+
+void waitForSeleniumSessionsToEnd(String host) {
+    isSeleniumSessionsActive(host)
+    timeout(time: 1, unit: 'MINUTES') {
+        echo "Waiting for selenium sessions to end at http://${host}"
+        while (isSeleniumSessionsActive(host)) {
+            sleep(time: 1, unit: 'SECONDS')
+        }
+        echo "No more selenoum sessions active at http://${host}"
+
+    }
+}
+
+boolean isSeleniumSessionsActive(String host) {
+    sh(returnStatus: true,
+            script: "curl -sSL http://$host:4444/grid/api/sessions | grep sessions") == 0
 }
