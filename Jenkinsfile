@@ -43,47 +43,11 @@ node {
                 },
                 uiTest: {
                     stage('UI Test') {
-                        String seleniumVersion = '3.14.0-p15'
-                        String zaleniumVersion = '3.14.0g'
-                        String zaleniumVideoDir = 'zalenium'
-                        boolean debugZalenium = false
-
-                        sh "mkdir -p ${zaleniumVideoDir}"
-
-                        docker.image("elgalu/selenium:${seleniumVersion}").pull()
-                        docker.image("dosel/zalenium:${zaleniumVersion}")
-                                .withRun(
-                                    // Zalenium starts headless browsers in docker containers, so it needs the socket
-                                    '-v /var/run/docker.sock:/var/run/docker.sock ' +
-                                    "-v ${WORKSPACE}/${zaleniumVideoDir}:/home/seluser/videos",
-                                    'start ' +
-                                    "${debugZalenium? '--debugEnabled true' : ''}"
-                                        ) { zaleniumContainer ->
-                            def zaleniumIp = new Docker(this).findIp(zaleniumContainer)
-
-                            waitForSeleniumToGetReady(zaleniumIp)
-                            // Delete videos from previous builds, if any
-                            // This also works around the bug that zalenium stores files as root
-                            // https://github.com/zalando/zalenium/issues/760
-                            // This workaround still leaves a couple of files owned by root in the zaleniumVideoDir
-                            resetZalenium(zaleniumIp)
-
-                            try {
-                                def petclinicHostIp = new Docker(this).findIp()
-                                mvn "failsafe:integration-test failsafe:verify -Pe2e " +
-                                        "-Dselenium.remote.url=http://${zaleniumIp}:4444/wd/hub " +
-                                        "-Dselenium.petclinic.host=${petclinicHostIp}"
-                            } finally {
-                                // Wait for Selenium sessions to end (i.e. videos to be copied)
-                                // Leaving the withRun() closure leads to "docker rm -f" being called, cancelling copying
-                                waitForSeleniumSessionsToEnd(zaleniumIp)
-                                archiveArtifacts allowEmptyArchive: true, artifacts: "$zaleniumVideoDir/*.mp4"
-
-                                // Stop container gracefully and wait
-                                sh "docker stop ${zaleniumContainer.id}"
-                                // Store log for debugging purposes
-                                sh "docker logs ${zaleniumContainer.id} > zalenium-docker.log 2>&1"
-                            }
+                        withZalenium { zaleniumIp ->
+                            def petclinicHostIp = new Docker(this).findIp()
+                            mvn "failsafe:integration-test failsafe:verify -Pe2e " +
+                                    "-Dselenium.remote.url=http://${zaleniumIp}:4444/wd/hub " +
+                                    "-Dselenium.petclinic.host=${petclinicHostIp}"
                         }
                     }
                 }
@@ -105,6 +69,47 @@ node {
 
     // Archive Unit and integration test results, if any
     junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/TEST-*.xml,**/target/surefire-reports/TEST-*.xml'
+}
+
+void withZalenium(config = [seleniumVersion : '3.14.0-p15',
+                            zaleniumVersion : '3.14.0g',
+                            zaleniumVideoDir: 'zalenium',
+                            debugZalenium   : false], Closure closure) {
+    sh "mkdir -p ${config.zaleniumVideoDir}"
+
+    docker.image("elgalu/selenium:${config.seleniumVersion}").pull()
+    docker.image("dosel/zalenium:${config.zaleniumVersion}")
+            .withRun(
+            // Zalenium starts headless browsers in docker containers, so it needs the socket
+            '-v /var/run/docker.sock:/var/run/docker.sock ' +
+            "-v ${WORKSPACE}/${config.zaleniumVideoDir}:/home/seluser/videos",
+            'start ' +
+            "${config.debugZalenium ? '--debugEnabled true' : ''}"
+            ) { zaleniumContainer ->
+
+        def zaleniumIp = new Docker(this).findIp(zaleniumContainer)
+
+        waitForSeleniumToGetReady(zaleniumIp)
+        // Delete videos from previous builds, if any
+        // This also works around the bug that zalenium stores files as root
+        // https://github.com/zalando/zalenium/issues/760
+        // This workaround still leaves a couple of files owned by root in the zaleniumVideoDir
+        resetZalenium(zaleniumIp)
+
+        try {
+            closure(zaleniumIp)
+        } finally {
+            // Wait for Selenium sessions to end (i.e. videos to be copied)
+            // Leaving the withRun() closure leads to "docker rm -f" being called, cancelling copying
+            waitForSeleniumSessionsToEnd(zaleniumIp)
+            archiveArtifacts allowEmptyArchive: true, artifacts: "${config.zaleniumVideoDir}/*.mp4"
+
+            // Stop container gracefully and wait
+            sh "docker stop ${zaleniumContainer.id}"
+            // Store log for debugging purposes
+            sh "docker logs ${zaleniumContainer.id} > zalenium-docker.log 2>&1"
+        }
+    }
 }
 
 void waitForSeleniumToGetReady(String host) {
