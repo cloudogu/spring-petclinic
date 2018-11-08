@@ -31,8 +31,8 @@ node {
 
         String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.1"
         parallel(
-                test: {
-                    stage('Test') {
+                unitTest: {
+                    stage('Unit Test') {
                         mvn "${jacoco}:prepare-agent test ${jacoco}:report"
                     }
                 },
