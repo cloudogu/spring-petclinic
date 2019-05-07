@@ -47,8 +47,8 @@ node {
         }
 
         stage('Deploy Artifacts') {
-            String releaseProp = "-DaltReleaseDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/content/repositories/releases/";
-            String snapshotProp = "-DaltSnapshotDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/content/repositories/snapshots/";
+            String releaseProp = "-DaltReleaseDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/repository/maven-releases/";
+            String snapshotProp = "-DaltSnapshotDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/repository/maven-snapshots/";
             mvn "-DskipTests deploy ${releaseProp} ${snapshotProp}"
         }
     }
@@ -63,8 +63,9 @@ String cesUrl = ''
 def credentials= {}
 
 void mvn(String args) {
+    mvnHome = tool 'M3'
     writeSettingsXml()
-    sh "./mvnw -s settings.xml --batch-mode -V -U -e -Dsurefire.useFile=false ${args}"
+    sh "${mvnHome}/bin/mvn -s settings.xml --batch-mode -V -U -e -Dsurefire.useFile=false ${args}"
     sh 'rm -f settings.xml'
 }
 
@@ -94,7 +95,7 @@ void writeSettingsXml() {
                     <mirror>
                       <id>${cesFqdn}</id>
                       <name>${cesFqdn} Central Mirror</name>
-                      <url>${cesUrl}/nexus/content/groups/public</url>
+                      <url>${cesUrl}/nexus/repository/maven-public/</url>
                       <mirrorOf>central</mirrorOf>
                     </mirror>
                 </mirrors>
