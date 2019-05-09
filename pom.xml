@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.samples</groupId>
-    <artifactId>pet-clinic</artifactId>
+    <artifactId>petclinic</artifactId>
     <version>1.5.2-SNAPSHOT</version>
 
     <parent>
@@ -12,7 +12,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.4.RELEASE</version>
     </parent>
-    <name>exampleproject1</name>
+    <name>petclinic</name>
 
     <properties>
 
@@ -131,7 +131,7 @@
                             <goal>build-info</goal>
                         </goals>
                         <configuration>
-                            <executable>true</executable>
+                            <executable>false</executable>
                             <additionalProperties>
                                 <encoding.source>${project.build.sourceEncoding}</encoding.source>
                                 <encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>

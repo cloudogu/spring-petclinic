@@ -1,48 +1,63 @@
-# Cloudogu EcoSystem Pet Clinic Demo
+# Petclinic Demo im Cloudogu EcoSystem
 
-Welcome to the Smeagol part of the Pet Clinic demo! This project is based on the famous Spring Pet Clinic sample application. But there is even more: This demo showcases the interaction within a Cloudogu EcoSystem development pipeline.
+Willkommen im Smeagol-Teil der Petclinic-Demo! Dieses Projekt basiert auf der berühmten Spring petclinic Beispielanwendung. Darüber hinaus haben wir aber noch mehr auf Lager: Diese Demo zeigt das Zusammenspiel innerhalb einer Cloudogu EcoSystem-Entwicklungspipeline im Kontext von Continuous Integration und Deployment (CI/CD) in ein Artefakt-Repository.
 
-## Interaction
+## Interaktion
 
-Before you start, here is what you have already at hand:
+Bevor Sie loslegen, sollten Sie betrachten, welche Dinge bereits für Sie in diesem Projekt konfiguriert wurden:
 
-- SCM Manager contains a `git` repo with
-    - the Pet Clinic demo code
-    - the Smeagol wiki pages that you are currently reading
-    - Jenkins pipeline definition
-    - Redmine integration
-- Jenkins contains
-    - a pipeline project
-    - SonarQube tool configuration
-    - Nexus tool configuration
-- Redmine contains a project with a development ticket
+- SCM-Manager enthält dieses Git-Repository:
+    - Demo-Code der spring-petclinic
+    - die Smeagol-Wiki-Seiten, die Sie gerade lesen
+    - Jenkins-Anbindung
+    - Redmine-Anbindung
+- Jenkins enthält
+    - ein Pipeline-Projekt
+    - Konfiguration des SonarQube-Tools
+    - Konfiguration des Nexus-Tools
+- Redmine enthält ein Projekt mit einem Entwicklungsticket
+- Smeagol enthält diese Dokumentation
 
-Now comes the part where we commit a change to demonstrate the ease-of-use when all parts in the build pipeline work together. We have all the tools of the trade ready, so this is what is going to happen:
+Nun kommt der Teil, um die Einfachheit zu demonstrieren, wie alle Teile in der Build-Pipeline zusammenarbeiten. Wir haben unser Handwerkszeug parat, und bei einer Code-Änderung wird Folgendes passieren:
 
-1. Commit and push a change into a `git` repo.
-    - Change a wiki page by clicking on and save it.
-    - This results in a  
-1. **Jenkins** notices the change and starts a pre-defined CI/CD Pipeline: 
-   - trigger the builds 
-   - runs Unit and Integration tests
-   - deploys artifacts to **Nexus** repos
-1. **SonarQube** analyzes your project on each change
-1. **Redmine** tracks your User Stories 
-1. **SCM Manager**
-   - accommodates your repositories
-   - also notifies Redmine about ticket mentions in your commit messages
+1. Übernehmen Sie eine Änderung und pushen Sie diese in das Git-Repository
+    - Z. B.: Bearbeiten Sie diese Wiki-Seite, indem Sie auf den Bearbeiten-Button ![Bearbeiten Button](images/SmeagolEditButton.png) klicken und speichern Sie sie
+    - Z. B.: Ändern Sie eine Datei (etwa `readme-petclinic.md`) und pushen Sie die Änderung zurück in das Git-Repository
+        - `git add readme-petclinic.md`
+        - `git commit -m "#1 Behebt Schnabelbruch"`
+        - `git push`
+1. **SCM-Manager**
+   - beherbergt dieses Repository inkl. Ihres eben getätigten Commits
+1. **Redmine** vermerkt Ihren Commit in der User Story
+1. **Jenkins** bemerkt die Änderung und startet eine vordefinierte CI/CD-Pipeline:
+   - ein Build wird ausgelöst
+   - Unit- und Integrationstests werden durchgeführt
+1. **SonarQube** analysiert Ihr Projekt
+1. Jenkins deployt ein JAR-Artefakt wird in ein `snapshot`-Repository im **Nexus**
 
+![Übersicht über das Zusammenspiel der CI/CD-Pipeline in diesem Beispielprojekt](images/Example-CI-CD-Project.jpg)
 
-1. **Smeagol** provides an easy-to-use Wiki backed by this git repo
-   - have your code and your docs in the same place! 
-   - For the purpose of demonstration, we change a Smeagol wiki page 
-   - This 
+Übrigens:
 
-![Overview of the interactions in this example project](images/Example-CI-CD-Project.jpg)
-
-
-Smeagol supports also embedded PlantUML:
+Smeagol unterstützt auch eingebettetes PlantUML mit unterschiedlichsten Digrammtypen:
 
 @startuml
-Bob -> Alice : hello
+
+participant Smeagol
+participant Kommandozeile
+database SCMManager as "SCM-Manager"
+participant Redmine
+participant Jenkins
+participant SonarQube
+database Nexus 
+
+Smeagol -> SCMManager : Wiki ändern
+Kommandozeile -> SCMManager : Quellcode ändern
+SCMManager -> Redmine : Ticket aktualisieren
+SCMManager -> Jenkins : Build anstoßen
+Jenkins -> Jenkins : Buildprozess starten
+Jenkins -> Jenkins : Tests ausführen
+Jenkins -> SonarQube : Quellcode analysieren
+Jenkins -> Nexus : JAR ablegen
+
 @enduml
