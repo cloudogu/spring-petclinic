@@ -47,8 +47,8 @@ node {
         }
 
         stage('Deploy Artifacts') {
-            String releaseProp = "-DaltReleaseDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/repository/maven-releases/";
-            String snapshotProp = "-DaltSnapshotDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/repository/maven-snapshots/";
+            String releaseProp = "-DaltReleaseDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/repository/releases/";
+            String snapshotProp = "-DaltSnapshotDeploymentRepository=${cesFqdn}::default::${cesUrl}/nexus/repository/snapshots/";
             mvn "-DskipTests deploy ${releaseProp} ${snapshotProp}"
         }
     }
@@ -95,7 +95,7 @@ void writeSettingsXml() {
                     <mirror>
                       <id>${cesFqdn}</id>
                       <name>${cesFqdn} Central Mirror</name>
-                      <url>${cesUrl}/nexus/repository/maven-public/</url>
+                      <url>${cesUrl}/nexus/repository/itzbundshared/</url>
                       <mirrorOf>central</mirrorOf>
                     </mirror>
                 </mirrors>
