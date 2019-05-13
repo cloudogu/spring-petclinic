@@ -28,6 +28,8 @@
         <wro4j.version>1.8.0</wro4j.version>
         <thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
 
+        <skipUnitTests>false</skipUnitTests>
+        <skipUiTests>true</skipUiTests>
         <cobertura.version>2.7</cobertura.version>
 
     </properties>

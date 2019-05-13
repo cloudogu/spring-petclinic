@@ -1,7 +1,6 @@
 package org.springframework.samples.petclinic.ui;
 
 import com.google.common.base.Function;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -13,12 +12,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WelcomeTest {
+public class WelcomeITCase {
     private URL seleniumHubUrl;
     private String targetUrl;
     private RemoteWebDriver driver;
@@ -30,14 +28,9 @@ public class WelcomeTest {
         String seleniumHubEndpoint = "/wd/hub";
         seleniumHubUrl = new URL("http://" + seleniumHubHost + ":" + seleniumHubPort + seleniumHubEndpoint);
 
-        String targetHost = "localhost";
+        String targetHost = "192.168.115.192";
         String targetPort = "1234";
         targetUrl = "http://" + targetHost + ":" + targetPort;
-    }
-
-    @Test
-    public void executeFirefoxDriver()  {
-        this.execute(DesiredCapabilities.firefox());
     }
 
     @Test
@@ -67,7 +60,7 @@ public class WelcomeTest {
 
         WebElement homeHeader = findByCss("body div.container h2");
 
-        assertThat(homeHeader.getText()).isEqualTo("Willkommen");
+        assertThat(homeHeader.getText()).isEqualTo("Welcome");
     }
 
     private void navigateByMenu() {
