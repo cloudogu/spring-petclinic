@@ -27,7 +27,7 @@ node {
             archiveArtifacts artifacts: '**/target/*.jar'
         }
 
-        String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.1"
+        String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.5"
 
         stage('Test') {
             mvn "${jacoco}:prepare-agent test ${jacoco}:report"
@@ -38,19 +38,19 @@ node {
             mvn "${jacoco}:prepare-agent-integration failsafe:integration-test failsafe:verify ${jacoco}:report-integration"
         }
 
-
-        stage('Static Code Analysis') {
-
-            def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
-
-            sonarQube.analyzeWith(mvn)
-        }
-
-        stage('Deploy') {
-            mvn.useDeploymentRepository([id: cesFqdn, url: "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
-
-            mvn.deployToNexusRepository('-Dmaven.javadoc.failOnError=false')
-        }
+// //Java-11 test on StageX does not need to test SQ and Nx stages
+//        stage('Static Code Analysis') {
+//
+//            def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
+//
+//            sonarQube.analyzeWith(mvn)
+//        }
+//
+//        stage('Deploy') {
+//            mvn.useDeploymentRepository([id: cesFqdn, url: "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
+//
+//            mvn.deployToNexusRepository('-Dmaven.javadoc.failOnError=false')
+//        }
     }
 
     // Archive Unit and integration test results, if any
