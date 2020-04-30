@@ -8,51 +8,55 @@ properties([
 ])
 
 node {
+    def java_home = tool 'OpenJDK-8'
+    withEnv(["JAVA_HOME=${java_home}"]) {
+        sh "env | grep -i java"
 
-    String cesFqdn = findHostName()
-    String cesUrl = "https://${cesFqdn}"
-    String credentialsId = 'scmCredentials'
+        String cesFqdn = findHostName()
+        String cesUrl = "https://${cesFqdn}"
+        String credentialsId = 'scmCredentials'
 
-    Maven mvn = new MavenWrapper(this)
+        Maven mvn = new MavenWrapper(this)
 
-    catchError {
+        catchError {
 
-        stage('Checkout') {
-            checkout scm
+            stage('Checkout') {
+                checkout scm
+            }
+
+            stage('Build') {
+                mvn 'clean package -DskipTests'
+
+                archiveArtifacts artifacts: '**/target/*.jar'
+            }
+
+            String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.1"
+
+            stage('Test') {
+                mvn "${jacoco}:prepare-agent test ${jacoco}:report"
+            }
+
+
+            stage('Integration Test') {
+                mvn "${jacoco}:prepare-agent-integration failsafe:integration-test failsafe:verify ${jacoco}:report-integration"
+            }
+
+
+//            stage('Static Code Analysis') {
+//
+//                def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
+//
+//                sonarQube.analyzeWith(mvn)
+//            }
+//
+//            stage('Deploy') {
+//                mvn.useDeploymentRepository([id: cesFqdn, url: "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
+//
+//                mvn.deployToNexusRepository('-Dmaven.javadoc.failOnError=false')
+//            }
         }
 
-        stage('Build') {
-            mvn 'clean package -DskipTests'
-
-            archiveArtifacts artifacts: '**/target/*.jar'
-        }
-
-        String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.5"
-
-        stage('Test') {
-            mvn "${jacoco}:prepare-agent test ${jacoco}:report"
-        }
-
-
-        stage('Integration Test') {
-            mvn "${jacoco}:prepare-agent-integration failsafe:integration-test failsafe:verify ${jacoco}:report-integration"
-        }
-
-// //Java-11 test on StageX does not need to test SQ and Nx stages
-//        stage('Static Code Analysis') {
-//
-//            def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
-//
-//            sonarQube.analyzeWith(mvn)
-//        }
-//
-//        stage('Deploy') {
-//            mvn.useDeploymentRepository([id: cesFqdn, url: "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
-//
-//            mvn.deployToNexusRepository('-Dmaven.javadoc.failOnError=false')
-//        }
+        // Archive Unit and integration test results, if any
+        junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/TEST-*.xml,**/target/surefire-reports/TEST-*.xml'
     }
-
-    // Archive Unit and integration test results, if any
-    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/TEST-*.xml,**/target/surefire-reports/TEST-*.xml'
 }
