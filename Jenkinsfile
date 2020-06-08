@@ -42,18 +42,18 @@ node {
             }
 
 
-//            stage('Static Code Analysis') {
-//
-//                def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
-//
-//                sonarQube.analyzeWith(mvn)
-//            }
-//
-//            stage('Deploy') {
-//                mvn.useDeploymentRepository([id: cesFqdn, url: "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
-//
-//                mvn.deployToNexusRepository('-Dmaven.javadoc.failOnError=false')
-//            }
+            stage('Static Code Analysis') {
+
+                def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
+
+                sonarQube.analyzeWith(mvn)
+            }
+
+            stage('Deploy') {
+                mvn.useDeploymentRepository([id: cesFqdn, url: "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
+
+                mvn.deployToNexusRepository('-Dmaven.javadoc.failOnError=false')
+            }
         }
 
         // Archive Unit and integration test results, if any
