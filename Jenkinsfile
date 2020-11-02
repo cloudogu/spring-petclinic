@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@93d7ac5')
+@Library('github.com/cloudogu/ces-build-lib@1.35.1')
 import com.cloudogu.ces.cesbuildlib.*
 
 properties([
@@ -14,8 +14,6 @@ node {
     String credentialsId = 'scmCredentials'
 
     Maven mvn = new MavenWrapper(this)
-    // Workaround SUREFIRE-1588 on Debian/Ubuntu. Should be fixed in Surefire 3.0.0
-    mvn.additionalArgs = '-DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"'
 
     catchError {
 
@@ -29,7 +27,7 @@ node {
             archiveArtifacts artifacts: '**/target/*.jar'
         }
 
-        String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.1"
+        String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.5"
         parallel(
                 unitTest: {
                     stage('Unit Test') {
@@ -61,7 +59,7 @@ node {
         }
 
         stage('Deploy') {
-            mvn.useDeploymentRepository([id: cesFqdn, url:  "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
+            mvn.useDeploymentRepository([id: cesFqdn, url: "${cesUrl}/nexus", credentialsId: credentialsId, type: 'Nexus3'])
 
             mvn.deployToNexusRepository('-Dmaven.javadoc.failOnError=false')
         }
