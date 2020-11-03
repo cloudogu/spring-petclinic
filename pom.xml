@@ -131,7 +131,6 @@
             <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>
     <!-- Testing -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -144,11 +143,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <optional>true</optional>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -364,9 +358,6 @@
         </pluginManagement>
       </build>
     </profile>
-  </profiles>
-
-    <profiles>
         <profile>
             <id>e2e</id>
             <build>
