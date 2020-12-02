@@ -10,7 +10,23 @@ We extended it by
 * a Jenkinsfile for building, testing and SonarQube analysis.
 
 For more details on petclinic, see also [original spring petclinci readme.md](readme-petclinic.md).
-# Spring PetClinic Sample Application [![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml)[![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml)
+
+---
+### What is the Cloudogu EcoSystem?
+The Cloudogu EcoSystem is an open platform, which lets you choose how and where your team creates great software. Each service or tool is delivered as a Dogu, a Docker container. Each Dogu can easily be integrated in your environment just by pulling it from our registry. We have a growing number of ready-to-use Dogus, e.g. SCM-Manager, Jenkins, Nexus, SonarQube, Redmine and many more. Every Dogu can be tailored to your specific needs. Take advantage of a central authentication service, a dynamic navigation, that lets you easily switch between the web UIs and a smart configuration magic, which automatically detects and responds to dependencies between Dogus. The Cloudogu EcoSystem is open source and it runs either on-premises or in the cloud. The Cloudogu EcoSystem is developed by Cloudogu GmbH under [MIT License](https://cloudogu.com/license.html).
+
+### How to get in touch?
+Want to talk to the Cloudogu team? Need help or support? There are several ways to get in touch with us:
+
+* [Website](https://cloudogu.com)
+* [myCloudogu-Forum](https://forum.cloudogu.com/topic/34?ctx=1)
+* [Email hello@cloudogu.com](mailto:hello@cloudogu.com)
+
+---
+&copy; 2020 Cloudogu GmbH - MADE WITH :heart:&nbsp;FOR DEV ADDICTS. [Legal notice / Impressum](https://cloudogu.com/imprint.html)
+
+
+Spring PetClinic Sample Application [![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml)[![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-projects/spring-petclinic) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=7517918)
 
@@ -105,11 +121,11 @@ The following items should be installed in your system:
 - Java 17 or newer (full JDK, not a JRE)
 - [Git command line tool](https://help.github.com/articles/set-up-git)
 - Your preferred IDE
-  - Eclipse with the m2e plugin. Note: when m2e is available, there is an m2 icon in `Help -> About` dialog. If m2e is
-  not there, follow the install process [here](https://www.eclipse.org/m2e/)
-  - [Spring Tools Suite](https://spring.io/tools) (STS)
-  - [IntelliJ IDEA](https://www.jetbrains.com/idea/)
-  - [VS Code](https://code.visualstudio.com)
+    - Eclipse with the m2e plugin. Note: when m2e is available, there is an m2 icon in `Help -> About` dialog. If m2e is
+      not there, follow the install process [here](https://www.eclipse.org/m2e/)
+    - [Spring Tools Suite](https://spring.io/tools) (STS)
+    - [IntelliJ IDEA](https://www.jetbrains.com/idea/)
+    - [VS Code](https://code.visualstudio.com)
 
 ### Steps
 
@@ -121,13 +137,13 @@ The following items should be installed in your system:
 
 1. Inside Eclipse or STS:
 
-    Open the project via `File -> Import -> Maven -> Existing Maven project`, then select the root directory of the cloned repo.
+   Open the project via `File -> Import -> Maven -> Existing Maven project`, then select the root directory of the cloned repo.
 
-    Then either build on the command line `./mvnw generate-resources` or use the Eclipse launcher (right-click on project and `Run As -> Maven install`) to generate the CSS. Run the application's main method by right-clicking on it and choosing `Run As -> Java Application`.
+   Then either build on the command line `./mvnw generate-resources` or use the Eclipse launcher (right-click on project and `Run As -> Maven install`) to generate the CSS. Run the application's main method by right-clicking on it and choosing `Run As -> Java Application`.
 
 1. Inside IntelliJ IDEA:
 
-    In the main menu, choose `File -> Open` and select the Petclinic [pom.xml](pom.xml). Click on the `Open` button.
+   In the main menu, choose `File -> Open` and select the Petclinic [pom.xml](pom.xml). Click on the `Open` button.
 
     - CSS files are generated from the Maven build. You can build them on the command line `./mvnw generate-resources` or right-click on the `spring-petclinic` project then `Maven -> Generates sources and Update Folders`.
 
@@ -135,7 +151,7 @@ The following items should be installed in your system:
 
 1. Navigate to the Petclinic
 
-    Visit [http://localhost:8080](http://localhost:8080) in your browser.
+   Visit [http://localhost:8080](http://localhost:8080) in your browser.
 
 ## Looking for something in particular?
 
