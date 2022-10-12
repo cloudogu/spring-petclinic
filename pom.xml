@@ -6,6 +6,7 @@
   <groupId>org.springframework.samples</groupId>
   <artifactId>spring-petclinic</artifactId>
   <version>2.4.0.BUILD-SNAPSHOT</version>
+  <packaging>war</packaging>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -39,6 +40,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -51,6 +58,21 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -64,12 +86,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-            </exclusion>
-        </exclusions>
     </dependency>
 
     <!-- Databases - Uses H2 by default -->
@@ -141,6 +157,7 @@
   </dependencies>
 
   <build>
+    <finalName>petclinic</finalName>
     <plugins>
       <plugin>
         <groupId>io.spring.javaformat</groupId>
@@ -229,9 +246,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <!-- Spring Boot Actuator displays build-related information if a git.properties
-        file is present at the classpath -->
       <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
@@ -251,7 +265,6 @@
           <failOnNoGitDirectory>false</failOnNoGitDirectory>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>ro.isdc.wro4j</groupId>
         <artifactId>wro4j-maven-plugin</artifactId>
@@ -283,6 +296,24 @@
             <version>${mockito.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <version>2.1.0.Beta1</version>
+        <configuration>
+          <filename>${project.build.finalName}.war</filename>
+          <username>gary</username>
+          <password>admin</password>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
