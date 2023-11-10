@@ -15,7 +15,9 @@
  */
 package org.springframework.samples.petclinic.vet;
 
+import org.springframework.samples.petclinic.system.BaseController;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -28,7 +30,7 @@ import java.util.Map;
  * @author Arjen Poutsma
  */
 @Controller
-class VetController {
+class VetController extends BaseController {
 
 	private final VetRepository vets;
 
@@ -37,21 +39,23 @@ class VetController {
 	}
 
 	@GetMapping("/vets.html")
-	public String showVetList(Map<String, Object> model) {
+	public String showVetList(Model model) {
 		// Here we are returning an object of type 'Vets' rather than a collection of Vet
 		// objects so it is simpler for Object-Xml mapping
 		Vets vets = new Vets();
 		vets.getVetList().addAll(this.vets.findAll());
-		model.put("vets", vets);
+		model.addAttribute("vets", vets);
+		addCommonAttributes(model);
 		return "vets/vetList";
 	}
 
 	@GetMapping({ "/vets" })
-	public @ResponseBody Vets showResourcesVetList() {
+	public @ResponseBody Vets showResourcesVetList(Model model) {
 		// Here we are returning an object of type 'Vets' rather than a collection of Vet
 		// objects so it is simpler for JSon/Object mapping
 		Vets vets = new Vets();
 		vets.getVetList().addAll(this.vets.findAll());
+		addCommonAttributes(model);
 		return vets;
 	}
 

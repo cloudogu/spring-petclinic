@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import org.springframework.samples.petclinic.system.BaseController;
 import org.springframework.samples.petclinic.visit.VisitRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,7 +38,7 @@ import java.util.Map;
  * @author Michael Isvy
  */
 @Controller
-class OwnerController {
+class OwnerController extends BaseController {
 
 	private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
 
@@ -74,8 +75,10 @@ class OwnerController {
 	}
 
 	@GetMapping("/owners/find")
-	public String initFindForm(Map<String, Object> model) {
-		model.put("owner", new Owner());
+	public String initFindForm(Model model) {
+		Owner owner = new Owner();
+		model.addAttribute("owner", owner);
+		addCommonAttributes(model);
 		return "owners/findOwners";
 	}
 

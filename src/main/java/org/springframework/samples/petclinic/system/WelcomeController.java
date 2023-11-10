@@ -17,13 +17,15 @@
 package org.springframework.samples.petclinic.system;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-class WelcomeController {
+class WelcomeController extends BaseController{
 
 	@GetMapping("/")
-	public String welcome() {
+	public String welcome(Model model) {
+		addCommonAttributes(model);
 		return "welcome";
 	}
 
