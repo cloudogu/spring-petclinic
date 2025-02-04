@@ -19,8 +19,6 @@
 
     <!-- Generic properties -->
     <java.version>17</java.version>
-    <maven.compiler.release>${java.version}</maven.compiler.release>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Important for reproducible builds. Update using e.g. ./mvnw versions:set
@@ -159,11 +157,7 @@
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
+
   </dependencies>
 
   <build>
@@ -251,7 +245,6 @@
               <goal>build-info</goal>
             </goals>
             <configuration>
-              <time>off</time>
               <additionalProperties>
                 <encoding.source>${project.build.sourceEncoding}</encoding.source>
                 <encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>
@@ -288,12 +281,6 @@
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
         <configuration>
-          <skip>true</skip>
-          <verbose>true</verbose>
-          <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
-          <generateGitPropertiesFile>true</generateGitPropertiesFile>
-          <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
-          </generateGitPropertiesFilename>
           <failOnNoGitDirectory>false</failOnNoGitDirectory>
           <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
         </configuration>
