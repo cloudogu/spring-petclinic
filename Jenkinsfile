@@ -27,7 +27,7 @@ node {
             archiveArtifacts artifacts: '**/target/*.jar'
         }
 
-        String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.5"
+        String jacoco = "org.jacoco:jacoco-maven-plugin:0.8.12"
 
         stage('Test') {
             mvn "${jacoco}:prepare-agent test ${jacoco}:report"
