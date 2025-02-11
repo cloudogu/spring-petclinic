@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.springframework.samples</groupId>
-  <artifactId>spring-petclinic</artifactId>
-  <version>1.5.2-SNAPSHOT</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -268,15 +265,6 @@
               <goal>prepare-agent</goal>
             </goals>
           </execution>
-        </executions>
-      </plugin>
-
-      <!-- Spring Boot Actuator displays build-related information if a git.properties
-        file is present at the classpath -->
-      <plugin>
-        <groupId>pl.project13.maven</groupId>
-        <artifactId>git-commit-id-plugin</artifactId>
-        <executions>
           <execution>
             <id>report</id>
             <goals>
