@@ -10,7 +10,7 @@ We extended it by
 * a Jenkinsfile for building, testing and SonarQube analysis
   - you need to create two Jenkins credentials
     1. username/password: `scmCredentials` for accessing the source code repository
-    2. secret text: `sonarqubeToken` for accessing SonarQube for scanning
+    2. secret text: `sonarAnalyzeToken` for accessing SonarQube for scanning
 
 For more details on petclinic, see also [original spring petclinci readme.md](readme-petclinic.md).
 
