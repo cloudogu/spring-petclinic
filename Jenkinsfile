@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@1.35.1')
+@Library('github.com/cloudogu/ces-build-lib@39261ee')
 import com.cloudogu.ces.cesbuildlib.*
 
 properties([
@@ -12,6 +12,7 @@ node {
     String cesFqdn = findHostName()
     String cesUrl = "https://${cesFqdn}"
     String credentialsId = 'scmCredentials'
+    String sonarqubeToken = 'sonarAnalyzeToken'
 
     Maven mvn = new MavenWrapper(this)
 
@@ -39,7 +40,7 @@ node {
 
         stage('Static Code Analysis') {
 
-            def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
+            def sonarQube = new SonarQube(this, [token: sonarqubeToken, sonarHostUrl: "${cesUrl}/sonar"])
 
             sonarQube.analyzeWith(mvn)
         }

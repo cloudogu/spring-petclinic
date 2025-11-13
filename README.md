@@ -7,7 +7,10 @@ We extended it by
 
 * a [Smeagol Wiki](https://github.com/cloudogu/smeagol) (see [Home.md](docs/Home.md))
 * an [integration test](src/test/java/org/springframework/samples/petclinic/owner/OwnerControllerITCase.java) (run with failsafe plugin, see [pom.xml](pom.xml))
-* a Jenkinsfile for building, testing and SonarQube analysis.
+* a Jenkinsfile for building, testing and SonarQube analysis
+  - you need to create two Jenkins credentials
+    1. username/password: `scmCredentials` for accessing the source code repository
+    2. secret text: `sonarqubeToken` for accessing SonarQube for scanning
 
 For more details on petclinic, see also [original spring petclinci readme.md](readme-petclinic.md).
 
