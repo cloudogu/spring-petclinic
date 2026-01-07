@@ -17,6 +17,7 @@ For more details on petclinic, see also [original spring petclinci readme.md](re
 * Install Jenkins, SonarQube and Nexus Dogus into it
 * Create a Jenkins pipeline project called "petclinic" and use this repository URL as the pipeline source
 * Create a "Global Analysis Token" in SonarQube ("My Account" -> "Security") and save it as a Jenkins secret text credential called "sonarToken"
+* Create a username/password Jenkins credential called "scmCredentials" with the username and password of a CES user which can push to Nexus (e.g. "admin")
 * Visit the Nexus Dogu and acknowledge the welcome dialogue
 * Run the "petclinic" Jenkins project
 
