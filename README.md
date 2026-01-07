@@ -11,6 +11,16 @@ We extended it by
 
 For more details on petclinic, see also [original spring petclinci readme.md](readme-petclinic.md).
 
+## Running the Jenkins pipeline
+
+* Install the Cloudogu EcoSystem
+* Install Jenkins, SonarQube and Nexus Dogus into it
+* Create a Jenkins pipeline project called "petclinic" and use this repository URL as the pipeline source
+* Create a "Global Analysis Token" in SonarQube ("My Account" -> "Security") and save it as a Jenkins secret text credential called "sonarToken"
+* Create a username/password Jenkins credential called "scmCredentials" with the username and password of a CES user which can push to Nexus (e.g. "admin")
+* Visit the Nexus Dogu and acknowledge the welcome dialogue
+* Run the "petclinic" Jenkins project
+
 ---
 ### What is the Cloudogu EcoSystem?
 The Cloudogu EcoSystem is an open platform, which lets you choose how and where your team creates great software. Each service or tool is delivered as a Dogu, a Docker container. Each Dogu can easily be integrated in your environment just by pulling it from our registry. We have a growing number of ready-to-use Dogus, e.g. SCM-Manager, Jenkins, Nexus, SonarQube, Redmine and many more. Every Dogu can be tailored to your specific needs. Take advantage of a central authentication service, a dynamic navigation, that lets you easily switch between the web UIs and a smart configuration magic, which automatically detects and responds to dependencies between Dogus. The Cloudogu EcoSystem is open source and it runs either on-premises or in the cloud. The Cloudogu EcoSystem is developed by Cloudogu GmbH under [MIT License](https://cloudogu.com/license.html).
