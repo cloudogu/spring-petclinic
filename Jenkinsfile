@@ -12,6 +12,7 @@ node {
     String cesFqdn = findHostName()
     String cesUrl = "https://${cesFqdn}"
     String credentialsId = 'scmCredentials'
+    String tokenId = 'sonarToken'
 
     Maven mvn = new MavenWrapper(this)
 
@@ -39,7 +40,7 @@ node {
 
         stage('Static Code Analysis') {
 
-            def sonarQube = new SonarQube(this, [usernamePassword: credentialsId, sonarHostUrl: "${cesUrl}/sonar"])
+            def sonarQube = new SonarQube(this, [token: tokenId, sonarHostUrl: "${cesUrl}/sonar"])
 
             sonarQube.analyzeWith(mvn)
         }
