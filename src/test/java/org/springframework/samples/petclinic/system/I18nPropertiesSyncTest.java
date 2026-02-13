@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.system;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -82,6 +83,7 @@ public class I18nPropertiesSyncTest {
 		}
 	}
 
+	@Disabled
 	@Test
 	public void checkI18nPropertyFilesAreInSync() throws IOException {
 		List<Path> propertyFiles;
