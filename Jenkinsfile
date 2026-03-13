@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@5.0.0')
+@Library('github.com/cloudogu/ces-build-lib@bugfix/154_introduce_sonar.login_for_sq_25.x')
 import com.cloudogu.ces.cesbuildlib.*
 
 properties([
